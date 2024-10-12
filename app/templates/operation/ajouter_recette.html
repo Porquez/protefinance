@@ -1,0 +1,11 @@
+<form id="recetteForm">
+    <label for="nature">Nature de la recette:</label>
+    <input type="text" name="nature" id="nature" required>
+
+    <label for="montant">Montant:</label>
+    <input type="number" name="montant" id="montant" step="0.01" required>
+
+    <button type="submit">Ajouter Recette</button>
+</form>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>

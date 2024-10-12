@@ -1,0 +1,32 @@
+[2024-10-05 15:31:56 +0200] [44475] [INFO] Starting gunicorn 22.0.0
+[2024-10-05 15:31:56 +0200] [44475] [INFO] Listening at: http://127.0.0.1:5000 (44475)
+[2024-10-05 15:31:56 +0200] [44475] [INFO] Using worker: sync
+[2024-10-05 15:31:56 +0200] [44542] [INFO] Booting worker with pid: 44542
+[2024-10-05 15:31:56 +0200] [44543] [INFO] Booting worker with pid: 44543
+[2024-10-05 15:31:56 +0200] [44544] [INFO] Booting worker with pid: 44544
+[2024-10-05 15:34:11 +0200] [44475] [CRITICAL] WORKER TIMEOUT (pid:44544)
+[2024-10-05 15:34:11 +0200] [44544] [ERROR] Error handling request (no URI read)
+Traceback (most recent call last):
+  File "/home/syst/.local/lib/python3.8/site-packages/gunicorn/workers/sync.py", line 134, in handle
+    req = next(parser)
+  File "/home/syst/.local/lib/python3.8/site-packages/gunicorn/http/parser.py", line 42, in __next__
+    self.mesg = self.mesg_class(self.cfg, self.unreader, self.source_addr, self.req_count)
+  File "/home/syst/.local/lib/python3.8/site-packages/gunicorn/http/message.py", line 257, in __init__
+    super().__init__(cfg, unreader, peer_addr)
+  File "/home/syst/.local/lib/python3.8/site-packages/gunicorn/http/message.py", line 60, in __init__
+    unused = self.parse(self.unreader)
+  File "/home/syst/.local/lib/python3.8/site-packages/gunicorn/http/message.py", line 269, in parse
+    self.get_data(unreader, buf, stop=True)
+  File "/home/syst/.local/lib/python3.8/site-packages/gunicorn/http/message.py", line 260, in get_data
+    data = unreader.read()
+  File "/home/syst/.local/lib/python3.8/site-packages/gunicorn/http/unreader.py", line 37, in read
+    d = self.chunk()
+  File "/home/syst/.local/lib/python3.8/site-packages/gunicorn/http/unreader.py", line 64, in chunk
+    return self.sock.recv(self.mxchunk)
+  File "/home/syst/.local/lib/python3.8/site-packages/gunicorn/workers/base.py", line 203, in handle_abort
+    sys.exit(1)
+SystemExit: 1
+[2024-10-05 15:34:11 +0200] [44544] [INFO] Worker exiting (pid: 44544)
+[2024-10-05 15:34:11 +0200] [45234] [INFO] Booting worker with pid: 45234
+[2024-10-05 15:42:15 +0200] [44542] [INFO] Parent changed, shutting down: <Worker 44542>
+[2024-10-05 15:42:15 +0200] [44542] [INFO] Worker exiting (pid: 44542)

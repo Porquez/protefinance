@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bilan Annuel</title>
+</head>
+<body>
+    <h1>Bilan Annuel pour {{ compte.nom_personne_protegee }}</h1>
+    <h2>Recettes</h2>
+    <ul>
+        {% for recette in recettes %}
+        <li>{{ recette.nature }}: {{ recette.montant }} €</li>
+        {% endfor %}
+    </ul>
+    <h2>Total Recettes: {{ total_recettes }} €</h2>
+
+    <h2>Dépenses</h2>
+    <ul>
+        {% for depense in depenses %}
+        <li>{{ depense.nature }}: {{ depense.montant }} €</li>
+        {% endfor %}
+    </ul>
+    <h2>Total Dépenses: {{ total_depenses }} €</h2>
+
+    <h2>Solde Final: {{ solde }} €</h2>
+</body>
+</html>

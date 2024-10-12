@@ -1,0 +1,247 @@
+/* Conteneur principal */
+.main-container {
+    display: flex;
+    justify-content: center;
+    padding-right: 200px; /* Espace pour le volet latéral */
+}
+
+/* Conteneur pour le tableau des opérations */
+.table-container {
+    width: 80%;  /* Ajuste la largeur du tableau */
+    margin: auto;
+    font-size: 0.9em;
+}
+
+/* Style pour le tableau des opérations */
+#operations-table {
+    width: 100%;  /* Le tableau prend toute la largeur de son conteneur */
+    font-size: 0.9em;
+}
+
+/* Pagination alignée à droite */
+.dataTables_paginate {
+    display: flex;
+    justify-content: flex-end;  /* Aligne la pagination à droite */
+    margin-top: 20px;
+}
+
+/* Style des onglets */
+.nav {
+    display: flex;
+    justify-content: center;  /* Centre les onglets */
+    border-bottom: 2px solid #ddd;
+    width: 100%;  /* Onglets à 100% de la largeur du conteneur */
+    margin-bottom: 20px;
+}
+
+.nav-link {
+    padding: 10px 15px;
+    font-size: 1.1em;
+    text-decoration: none;
+    color: #007bff;
+}
+
+.nav-link.active {
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px 5px 0 0;
+}
+
+.nav-link:hover {
+    background-color: #0056b3; /* Couleur de fond au survol */
+    color: white; /* Couleur du texte au survol */
+}
+
+/* Filtre de recherche et options */
+.search-filter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.search-filter input {
+    width: 60%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.search-filter button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+/* Style pour le volet latéral */
+.side-panel {
+    position: fixed;
+    top: 100px;
+    right: 0;
+    width: 200px;
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-left: 1px solid #ddd;
+    height: 100%;
+}
+.side-panel h4 {
+    margin-bottom: 10px;
+}
+.side-panel select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 20px;
+}
+.side-panel .ajouter-compte img {
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+}
+
+.side-panel ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+.side-panel ul li {
+    margin-bottom: 10px;
+}
+.side-panel ul li a {
+    text-decoration: none;
+    color: #007bff;
+}
+.side-panel ul li a:hover {
+    text-decoration: underline;
+}
+
+@font-face {
+    font-family: 'YourCustomFont';
+    src: url('/static/fonts/your-font.woff2') format('woff2');
+    font-display: swap;
+}
+
+/* Style pour le sélecteur de comptes */
+select {
+    padding: 8px;
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+/* Style pour l'icône d'ajout de compte */
+.ajouter-compte img {
+    cursor: pointer;
+}
+
+/* Style pour le tableau des opérations */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+table, th, td {
+    border: 1px solid #ffffff;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #333;
+    color: #ffffff;
+}
+
+td {
+    background-color: #222;
+    color: #ffffff;
+}
+
+td a {
+    color: #0c82f2;
+}
+
+td a:hover {
+    text-decoration: underline;
+}
+
+
+/* Style général pour le corps */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #181a1b; /* Couleur de fond sombre */
+    color: #ffffff; /* Texte blanc */
+    margin: 0;
+    padding: 0;
+}
+/* Style pour le header */
+header {
+    background-color: #1f2223; /* Couleur légèrement différente pour le header */
+    padding: 20px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    color: #ffffff;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline-block;
+    margin: 0 10px;
+}
+
+nav ul li a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav ul li a:hover {
+    color: #0c82f2; /* Couleur d'accent lors du survol */
+}
+
+/* Style pour le contenu principal */
+main {
+    padding: 20px;
+}
+
+/* Style pour les boutons et actions rapides */
+a {
+    color: #0c82f2;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+footer {
+    background-color: #1f2223;
+    color: #ffffff;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #0c82f2;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.btn:hover {
+    background-color: #007bb5;
+}

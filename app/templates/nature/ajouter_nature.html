@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block title %}Ajouter une Nature{% endblock %}
+
+{% block content %}
+<h2>Ajouter une nouvelle nature</h2>
+
+<form method="POST" action="{{ url_for('ajouter_nature') }}">
+    {{ form.hidden_tag() }}  <!-- CSRF token -->
+    
+    <div>
+        {{ form.nom.label }} {{ form.nom(class="form-control") }}
+    </div>
+    <div>
+        {{ form.type_operation.label }} {{ form.type_operation(class="form-control") }}
+    </div>
+    <div>
+        {{ form.submit(class="btn btn-primary") }}
+    </div>
+</form>
+
+<a href="{{ url_for('ajouter_operation') }}">Retour</a>
+{% endblock %}

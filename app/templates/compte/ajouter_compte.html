@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block title %}Ajouter un compte{% endblock %}
+
+{% block content %}
+<h2>Ajouter un nouveau compte</h2>
+
+<form method="POST" action="{{ url_for('ajouter_compte') }}">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+        {{ form.nom_personne_protegee.label }} {{ form.nom_personne_protegee(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.rib.label }} {{ form.rib(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.type_compte.label }} {{ form.type_compte(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.solde_initial.label }} {{ form.solde_initial(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.banque.label }} {{ form.banque(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.submit(class="btn btn-primary") }}
+    </div>
+</form>
+
+<a href="{{ url_for('index') }}">Retour</a>
+{% endblock %}

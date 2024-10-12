@@ -1,0 +1,150 @@
+{% extends "layout.html" %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block content %}
+
+<style>
+    .btn-action {
+        width: 40px;  /* Largeur uniforme des boutons */
+        height: 40px; /* Hauteur uniforme des boutons */
+        padding: 0;
+        margin: 0;
+        border: none;
+        background-color: transparent;
+        cursor: pointer;
+        display: inline-flex; /* Utiliser flexbox pour centrer l'icône */
+        align-items: center;
+        justify-content: center;
+        vertical-align: middle;
+    }
+
+    /* Couleur de fond pour améliorer la visibilité */
+    .btn-action:hover {
+        background-color: #ffffff; /* Fond clair au survol */
+        border-radius: 5px; /* Bordure arrondie au survol */
+    }
+
+    .btn-icon {
+        width: 20px; /* Taille uniforme des icônes */
+        height: 20px;
+        filter: brightness(0) invert(1); /* Inverser les couleurs des icônes sombres pour les rendre blanches */
+    }
+</style>
+
+<div class="main-container">
+    <!-- Tableau des opérations centré -->
+    <div class="table-container">
+        <!-- Onglets pour filtrer les opérations -->
+        <div class="nav nav-tabs">
+            <a class="nav-link active" id="all-operations-tab" href="#">Toutes les opérations</a>
+            <a class="nav-link" id="depenses-tab" href="#">Dépenses</a>
+            <a class="nav-link" id="recettes-tab" href="#">Recettes</a>
+        </div>
+
+        <!-- Recherche et filtres -->
+        <div class="search-filter">
+            <input type="text" id="search-box" placeholder="Rechercher des opérations..." class="form-control">
+            <button class="btn btn-light" id="search-button">
+                <i class="fa fa-search"></i> Rechercher
+            </button>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown">
+                    Filtrer par colonne
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#" data-filter="type">Type</a>
+                    <a class="dropdown-item" href="#" data-filter="nature">Nature</a>
+                    <a class="dropdown-item" href="#" data-filter="montant">Montant</a>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <a href="{{ url_for('ajouter_operation', compte_id=compte.id) }}" class="btn btn-primary">Ajouter une opération</a>
+        </div>
+
+        {% if compte %}
+        <div>
+            <h3>Compte de {{ compte.nom_personne_protegee }}</h3>
+            <table id="operations-table" class="display">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Nature</th>
+                        <th>Bénéficiaire</th>
+                        <th>Désignation</th>
+                        <th>Montant (€)</th>
+						<th>Numéro de pièce</th> 
+                        <th>Date</th>
+                        <th>Pièce Justificative</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for operation in operations %}
+                    <tr>
+                        <td>{{ 'Recette' if operation.nature.type_operation == 'recette' else 'Dépense' }}</td>
+                        <td>{{ operation.nature.nom }}</td>
+                        <td>{{ operation.beneficiaire.nom }}</td>
+                        <td>{{ operation.designation }}</td>
+                        <td style="text-align: right;">{{ operation.montant }}</td>
+						<td>{{ operation.numero_piece }}</td>
+                        <td>{{ operation.date.strftime('%d/%m/%Y') }}</td>
+                        <td>
+                            {% if operation.pieces_justificatives %}
+                                <a href="{{ url_for('static', filename='uploads/' + operation.pieces_justificatives[0].nom_fichier) }}" target="_blank">
+                                    {{ operation.pieces_justificatives[0].nom_fichier }}
+                                </a>
+                            {% else %}
+                                Pas de PJ
+                            {% endif %}
+                        </td>
+						<td>
+							<a href="{{ url_for('modifier_operation', operation_id=operation.id) }}" class="btn btn-link" title="Modifier">
+								<img src="{{ url_for('static', filename='img/edit.png') }}" alt="Modifier" style="width: 20px; height: 20px;">
+							</a>
+							<form action="{{ url_for('supprimer_operation', operation_id=operation.id) }}" method="POST" style="display:inline;" onsubmit="return confirmDelete({{ operation.pieces_justificatives|length > 0 }});">
+								<button type="submit" class="btn btn-link" title="Supprimer">
+									<img src="{{ url_for('static', filename='img/trash.png') }}" alt="Supprimer" style="width: 20px; height: 20px;">
+								</button>
+							</form>
+						</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Volet latéral de sélection de compte -->
+    <div class="side-panel">
+        <h4>Sélectionner un compte</h4>
+        <select id="compte-select" onchange="window.location.href='/?compte_id=' + this.value;">
+            <option value="">--Choisissez un compte--</option>
+            {% for compte in comptes %}
+            <option value="{{ compte.id }}">{{ compte.nom_personne_protegee }}</option>
+            {% endfor %}
+        </select>
+        
+        <!-- Icône pour ajouter un nouveau compte -->
+        <a href="{{ url_for('ajouter_compte') }}" class="ajouter-compte">
+            <img src="{{ url_for('static', filename='plus-icon.png') }}" alt="Ajouter un compte" title="Ajouter un nouveau compte">
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+    function confirmDelete(hasPieceJointe) {
+        if (hasPieceJointe) {
+            return confirm('Cette opération a une pièce jointe associée. Voulez-vous supprimer l\'opération et la pièce jointe associée ?');
+        }
+        return confirm('Voulez-vous vraiment supprimer cette opération ?');
+    }
+	</script>
+	<!-- Lien vers le fichier JS externe -->
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+{% endblock %}

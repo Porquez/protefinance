@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block title %}Ajouter un Bénéficiaire{% endblock %}
+
+{% block content %}
+<h2>Ajouter un Bénéficiaire</h2>
+
+<form method="POST" action="{{ url_for('ajouter_beneficiaire') }}">
+    {{ form.hidden_tag() }}
+    
+    <table>
+        <tr>
+            <td>{{ form.nom.label }}</td>
+            <td>{{ form.nom() }}</td>
+        </tr>
+        <tr>
+            <td>{{ form.ville.label }}</td>
+            <td>{{ form.ville() }}</td>
+        </tr>
+        <tr>
+            <td>{{ form.telephone.label }}</td>
+            <td>{{ form.telephone() }}</td>
+        </tr>
+        <tr>
+            <td colspan="2">{{ form.submit(class="btn btn-primary") }}</td>
+        </tr>
+    </table>
+</form>
+
+<a href="{{ url_for('ajouter_operation') }}">Retour</a>
+{% endblock %}

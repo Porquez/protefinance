@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ProtéFinance{% endblock %}</title>
+    <link rel="preload" href="{{ url_for('static', filename='css/style.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" media="all">
+    </noscript>
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #181a1b; /* Fond sombre */
+            color: #ffffff; /* Texte blanc */
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #1f2223;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        header h1 {
+            margin: 0;
+            color: #ffffff;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        /* Styling for the logo image */
+        .logo {
+            width: 50px; /* Adjust the size of the logo */
+            height: auto;
+            vertical-align: middle;
+            margin-right: 15px;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 10px;
+        }
+        nav ul li {
+            display: inline-block;
+            margin: 0 10px;
+        }
+        nav ul li a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav ul li a:hover {
+            color: #0c82f2;
+        }
+    </style>
+</head>
+<body id="protefinance-body">
+    <header>
+        <!-- Logo and title next to each other -->
+        <img src="{{ url_for('static', filename='img/protefinance.png') }}" alt="Protéfinance Logo" class="logo">
+        <h1>ProtéFinance</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Accueil</a></li>
+                <li><a href="{{ url_for('contacts') }}">Gestion des contacts</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        <p>&copy; 2024 ProtéFinance. Tous droits réservés.</p>
+    </footer>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
+    <!-- External JS -->
+    {% block scripts %}
+        <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    {% endblock %}
+</body>
+</html>

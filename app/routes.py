@@ -49,20 +49,38 @@ def index():
 
 @app.route('/formulaire_banque', methods=['GET', 'POST'])
 def formulaire_banque():
-    form = BanqueForm()  # Remplacez FormBanque par le nom réel de votre formulaire de création de banque
+    form = BanqueForm()  # Assurez-vous que votre formulaire a tous les champs requis
     if request.method == 'POST' and form.validate_on_submit():
-        nom = form.nom.data  # Exemple de champ du formulaire
+        # Récupération des données du formulaire
+        nom = form.nom.data
         adresse = form.adresse.data
+        code_postal = form.code_postal.data
+        ville = form.ville.data
         telephone = form.telephone.data  # Optionnel
+        email = form.email.data  # Optionnel
+        identifiant_client = form.identifiant_client.data  # Optionnel
+        nom_conseiller = form.nom_conseiller.data  # Optionnel
 
-        # Ajoutez ici la logique pour enregistrer la banque dans la base de données
-        nouvelle_banque = Banque(nom=nom, adresse=adresse, telephone=telephone)
+        # Créer une nouvelle instance de Banque
+        nouvelle_banque = Banque(
+            nom=nom,
+            adresse=adresse,
+            code_postal=code_postal,
+            ville=ville,
+            telephone=telephone,
+            email=email,
+            identifiant_client=identifiant_client,
+            nom_conseiller=nom_conseiller
+        )
+        
+        # Ajouter à la session et valider
         db.session.add(nouvelle_banque)
         db.session.commit()
 
-        return redirect(url_for('index'))  # Rediriger vers la page d'accueil après l'ajout
+        flash('La banque a été ajoutée avec succès.', 'success')  # Message de succès
+        return redirect(url_for('index'))
 
-    return render_template('banque/formulaire_banque.html', form=form)  # Assurez-vous de passer le formulaire au template
+    return render_template('banque/formulaire_banque.html', form=form)  # Passer le formulaire au template
 
 @app.route('/ajouter_beneficiaire', methods=['GET', 'POST'])
 def ajouter_beneficiaire():

@@ -2,7 +2,7 @@ from datetime import datetime
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import DateField, FloatField, SelectField, StringField, SubmitField
-from wtforms.validators import DataRequired, Length
+from wtforms.validators import DataRequired, Length, Optional
 from app.models import Nature, Beneficiaire, Compte, ModeReglement, Contact
 
 class PieceJustificativeForm(FlaskForm):
@@ -32,7 +32,12 @@ class CompteForm(FlaskForm):
 class BanqueForm(FlaskForm):
     nom = StringField('Nom de la Banque', validators=[DataRequired()])
     adresse = StringField('Adresse', validators=[DataRequired()])
-    telephone = StringField('Téléphone', validators=[DataRequired()])
+    code_postal = StringField('Code Postal', validators=[DataRequired()])
+    ville = StringField('Ville', validators=[DataRequired()])
+    telephone = StringField('Téléphone', validators=[Optional()])
+    email = StringField('Email', validators=[Optional()])
+    identifiant_client = StringField('Identifiant Client', validators=[Optional()])
+    nom_conseiller = StringField('Nom Conseiller', validators=[Optional()])
     submit = SubmitField('Ajouter la Banque')
 
 class NatureForm(FlaskForm):

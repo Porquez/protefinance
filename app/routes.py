@@ -3,7 +3,6 @@ from flask import render_template, redirect, url_for, request, flash, current_ap
 from app.models import Compte, Operation, Nature, Beneficiaire, ModeReglement, PieceJustificative, Contact, Banque, ReleveCompte
 from app.forms import CompteForm, OperationForm, BeneficiaireForm, ModeReglementForm, PieceJustificativeForm, ContactForm, NatureForm, BanqueForm
 from werkzeug.utils import secure_filename
-from PyPDF2 import PdfReader
 from pdf2image import convert_from_path
 
 import pytesseract
@@ -358,43 +357,47 @@ def import_releve():
             compte_id = request.form.get('compte_id')
             return render_template('relevebanque/valider_releve.html', operations=transactions, compte_id=compte_id, natures=natures)
 
-    return redirect(url_for('index'))
+        flash('Veuillez sélectionner un fichier PDF valide.', 'danger')
+        return redirect(url_for('import_releve'))
 
+    return render_template('import_releve.html', natures=natures)
 
 @app.route('/valider_releve', methods=['POST'])
 def valider_releve():
     operations = request.form
     compte_id = request.form.get('compte_id')
     selected_operations = request.form.getlist('selected_operations')
-    
+
     logging.info('Validation des opérations...')
     
-    for index in selected_operations:
-        date_operation = request.form.get(f'date_operation_{index}')
-        designation = request.form.get(f'designation_{index}')
-        debit = request.form.get(f'debit_{index}')
-        credit = request.form.get(f'credit_{index}')
-        nature = request.form.get(f'nature_{index}')
+    try:
+        for index in selected_operations:
+            date_operation = request.form.get(f'date_operation_{index}')
+            designation = request.form.get(f'designation_{index}')
+            debit = request.form.get(f'debit_{index}')
+            credit = request.form.get(f'credit_{index}')
+            nature = request.form.get(f'nature_{index}')
 
-        # Enregistrer uniquement les opérations sélectionnées
-        releve = ReleveCompte(
-            compte_id=compte_id,
-            date_operation=date_operation,
-            designation=designation,
-            debit=debit,
-            credit=credit,
-            nature_id=nature
-        )
-        db.session.add(releve)
-        logging.info(f'Opération ajoutée : {releve}')
+            # Enregistrer uniquement les opérations sélectionnées
+            releve = ReleveCompte(
+                compte_id=compte_id,
+                date_operation=date_operation,
+                designation=designation,
+                debit=debit,
+                credit=credit,
+                nature_id=nature
+            )
+            db.session.add(releve)
+            logging.info(f'Opération ajoutée : {releve}')
 
-    db.session.commit()
-    flash('Les opérations ont été validées avec succès.')
+        db.session.commit()
+        flash('Les opérations ont été validées avec succès.')
+    except Exception as e:
+        db.session.rollback()  # Annuler les changements en cas d'erreur
+        logging.error(f'Erreur lors de la validation des opérations : {e}')
+        flash('Une erreur est survenue lors de la validation des opérations.', 'danger')
+
     return redirect(url_for('index'))
-
-import logging
-from pdf2image import convert_from_path
-import pytesseract
 
 def extract_transactions(file_path):
     transactions = []
@@ -427,16 +430,10 @@ def extract_transactions(file_path):
                                 date_str = parts[0] 
                                 libelle = ' '.join(parts[1:-1])  # Libellé de l'opération
                                 montant_str = parts[-1].replace(',', '.').replace('€', '').strip()  # Montant
-                                try:
-                                    montant = float(montant_str) if montant_str else 0.0  # Défaut à 0.0 si vide
-                                except ValueError:
-                                    logging.error(f'Erreur de conversion du montant : {montant_str}')
-                                    montant = 0.0  # Ou gérer comme bon vous semble
+                                montant = float(montant_str) if montant_str else 0.0  # Défaut à 0.0 si vide
 
                                 # Extraire le montant et parse la date
                                 date = parse_date(date_str)
-                                montant = float(montant_str) if montant_str else None
-
                                 # Ventiler le débit ou le crédit
                                 if any(word in libelle for word in ["Achat", "ACHAT", "Carte", "CARTE", "Prélèvement", "PRELEVEMENT"]):
                                     debit = montant if montant >= 0 else None
@@ -477,4 +474,3 @@ def parse_date(date_str):
     except ValueError as e:
         logging.error(f'Erreur de parsing de date: {e} pour la chaîne: {date_str}')
         return None
-

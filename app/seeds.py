@@ -5,6 +5,8 @@ def seed_natures():
     from app.models import Nature  # Importer les modèles nécessaires ici
 
     natures = [
+        {"nom": "DEPENSE", "type_operation": "depense"},
+        {"nom": "RECETTE", "type_operation": "recette"},
         {"nom": "Frais d'hébergement", "type_operation": "depense"},
         {"nom": "Charges, Transport", "type_operation": "depense"},
         {"nom": "Nourriture", "type_operation": "depense"},
@@ -24,6 +26,15 @@ def seed_natures():
         if not Nature.query.filter_by(nom=nature_data["nom"]).first():
             nature = Nature(**nature_data)
             db.session.add(nature)
+
+        # Vérifiez si les natures existent déjà pour éviter les doublons
+        if not Nature.query.filter_by(type_operation='recette').first():
+            nature_recette = Nature(type_operation='recette')
+            db.session.add(nature_recette)
+
+        if not Nature.query.filter_by(type_operation='depense').first():
+            nature_depense = Nature(type_operation='depense')
+            db.session.add(nature_depense)
 
     db.session.commit()  # Validez la session
 
@@ -52,9 +63,7 @@ def seed_beneficiaires():
     from app.models import Beneficiaire  # Importer le modèle nécessaire
 
     beneficiaires = [
-        {"nom": "Intermarché", "ville": "Amiens", "telephone": "0123456789"},
-        {"nom": "Auchan", "ville": "Dury", "telephone": "0987654321"},
-        {"nom": "Carrefour", "ville": "Amiens", "telephone": "0234567890"},
+        {"nom": "Inconnu", "ville": "Non renseigné", "telephone": "0000000"},
     ]
 
     for beneficiaire_data in beneficiaires:

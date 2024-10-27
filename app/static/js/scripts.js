@@ -1,17 +1,14 @@
 $(document).ready(function () {
     // Vérifiez si la table DataTable existe déjà
     if ($.fn.dataTable.isDataTable('#operations-table')) {
-        // Si elle existe, détruisez l'instance actuelle avant de la réinitialiser
         $('#operations-table').DataTable().destroy();
     }
 
-   
-    // Initialisation de DataTable avec les options
     var table = $('#operations-table').DataTable({
-        "order": [[3, "desc"]], // Tri par défaut sur la colonne montant
+        "order": [[3, "desc"]],
         "paging": true,
-        "pageLength": 10,  // Nombre d'opérations par page
-        "lengthMenu": [5, 10, 20],  // Options pour la pagination
+        "pageLength": 10,
+        "lengthMenu": [5, 10, 20],
         "language": {
             "lengthMenu": "Afficher _MENU_ opérations par page",
             "zeroRecords": "Aucune opération trouvée",
@@ -34,19 +31,23 @@ $(document).ready(function () {
         table.search(searchTerm).draw();
     });
 
-    // Gestion des onglets (Toutes, Dépenses, Recettes)
+    // Gestion des onglets
     $('#all-operations-tab').on('click', function () {
         table.column(0).search('').draw();  // Afficher toutes les opérations
     });
 
     $('#depenses-tab').on('click', function () {
-        table.column(0).search('Dépense').draw();  // Filtrer uniquement les dépenses
+        table.column(1).search('Dépense').draw();  // Filtrer uniquement les dépenses
     });
 
     $('#recettes-tab').on('click', function () {
-        table.column(0).search('Recette').draw();  // Filtrer uniquement les recettes
+        table.column(1).search('Recette').draw();  // Filtrer uniquement les recettes
     });
 
+    $('#releve-bancaire-tab').on('click', function () {
+        // Filtrer pour n'afficher que les relevés bancaires
+        table.column(0).search('importée').draw();
+    });
     // Gestion du tri ascendant et descendant des colonnes
     $('th').on('click', function () {
         var columnIdx = $(this).index();

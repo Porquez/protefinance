@@ -3,54 +3,167 @@
 {% block title %}Modifier une Opération{% endblock %}
 
 {% block content %}
-<h2>Modifier l'opération</h2>
 
-<form method="POST" action="{{ url_for('modifier_operation', operation_id=operation.id) }}" enctype="multipart/form-data">
-    {{ form.hidden_tag() }}  <!-- CSRF token -->
+<style>
+      .form-wrapper {
+        max-width: 800px;
+        margin: auto;
+        background: #f8f8f8;
+        padding: 20px;
+        padding-bottom: 40px; /* Ajout pour assurer l'espace pour les boutons */
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        overflow: auto;
+        min-height: 100vh;
+    }
     
-    <table>
-        <tr>
-            <td>{{ form.date.label }}</td>
-            <td>{{ form.date() }}</td>
-        </tr>
-        <tr>
-            <td>{{ form.beneficiaire.label }}</td>
-            <td>{{ form.beneficiaire() }}</td>
-        </tr>
-        <tr>
-            <td>{{ form.montant.label }}</td>
-            <td>{{ form.montant(size=10) }}</td>
-        </tr>
-        <tr>
-            <td>{{ form.nature.label }}</td>
-            <td>{{ form.nature() }}</td>
-        </tr>
-        <tr>
-            <td>{{ form.designation.label }}</td>
-            <td>{{ form.designation() }}</td>
-        </tr>
-        <tr>
-            <td>{{ form.modereglement.label }}</td>
-            <td>{{ form.modereglement() }}</td>
-        </tr>
-		<tr>
-            <td>{{ form.numero_piece.label }}</td>
-            <td>{{ form.numero_piece() }}</td>  
-        </tr>
-        <tr>
-        <tr>
-            <td>{{ form.compte_id.label }}</td>
-            <td>{{ form.compte_id() }}</td>
-        </tr>
-        <tr>
-            <td>{{ form.fichiers.label }}</td>
-            <td>{{ form.fichiers() }}</td> <!-- Champ pour le téléchargement de fichiers -->
-        </tr>
-        <tr>
-            <td colspan="2">{{ form.submit(class="btn btn-primary") }}</td>
-        </tr>
-    </table>
-</form>
+    .button-group {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
 
-<a href="{{ url_for('index') }}">Retour</a>
+    
+    h2 {
+        text-align: center;
+        color: #333;
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-container .form-control,
+    .form-container .form-control-file {
+        width: 100%;
+        padding: 12px;
+        font-size: 1rem;
+        color: #495057;
+        background-color: #fff;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+    }
+
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 1rem;
+        font-weight: bold;
+        color: #fff;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border: none;
+    }
+
+    .btn-secondary:hover {
+        background-color: #5a6268;
+    }
+
+    .submit-group {
+        text-align: center;
+    }
+</style>
+
+<div class="form-wrapper">
+    <h2>Modifier l'Opération</h2>
+
+    <form method="POST" action="{{ url_for('modifier_operation', operation_id=operation.id) }}"
+        enctype="multipart/form-data" class="form-container">
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            <label>{{ form.date.label }}</label>
+            {{ form.date(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            <label>{{ form.beneficiaire.label }}</label>
+            {{ form.beneficiaire(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            <label>{{ form.montant.label }}</label>
+            {{ form.montant(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            <label>{{ form.nature.label }}</label>
+            {{ form.nature(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            <label>{{ form.designation.label }}</label>
+            {{ form.designation(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            <label>{{ form.modereglement.label }}</label>
+            {{ form.modereglement(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            <label>{{ form.numero_piece.label }}</label>
+            {{ form.numero_piece(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            <label>{{ form.compte_id.label }}</label>
+            {{ form.compte_id(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            <label>Nom de fichier actuel</label>
+            {% if current_file_name %}
+            <input type="text" class="form-control" value="{{ current_file_name }}" readonly>
+            {% else %}
+            <p>Aucun fichier téléchargé.</p>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label>{{ form.fichiers.label }}</label>
+            {{ form.fichiers(class="form-control-file") }}
+        </div>
+
+        <div class="button-group">
+            {{ form.submit(class="btn btn-primary") }}
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">Retour</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const formControls = document.querySelectorAll(".form-control, .form-control-file");
+        formControls.forEach(control => {
+            control.addEventListener("focus", function () {
+                control.closest('.form-group').style.backgroundColor = "#f0f8ff";
+            });
+            control.addEventListener("blur", function () {
+                control.closest('.form-group').style.backgroundColor = "transparent";
+            });
+        });
+    });
+</script>
 {% endblock %}

@@ -40,6 +40,7 @@
             <a class="nav-link active" id="all-operations-tab" href="#">Toutes les opérations</a>
             <a class="nav-link" id="depenses-tab" href="#">Dépenses</a>
             <a class="nav-link" id="recettes-tab" href="#">Recettes</a>
+            <a class="nav-link" id="releve-bancaire-tab" href="#">Relevés Bancaires</a>
         </div>
 
         <!-- Recherche et filtres -->
@@ -59,7 +60,6 @@
                 </div>
             </div>
         </div>
-
         <div>
             <a href="{{ url_for('ajouter_operation', compte_id=compte.id) }}" class="btn btn-primary">Ajouter une opération</a>
         </div>
@@ -70,6 +70,7 @@
             <table id="operations-table" class="display">
                 <thead>
                     <tr>
+                        <th>Source</th>
                         <th>Type</th>
                         <th>Nature</th>
                         <th>Bénéficiaire</th>
@@ -82,17 +83,18 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for operation in operations %}
+                    {% for operation, source in operations %}
                     <tr>
+                        <td>{{ source }}</td>  
                         <td>{{ 'Recette' if operation.nature.type_operation == 'recette' else 'Dépense' }}</td>
-                        <td>{{ operation.nature.nom }}</td>
-                        <td>{{ operation.beneficiaire.nom }}</td>
+                        <td>{{ operation.nature.nom if source == 'manuelle' else 'N/A' }}</td>  
+                        <td>{{ operation.beneficiaire.nom if source == 'manuelle' else 'N/A' }}</td>
                         <td>{{ operation.designation }}</td>
-                        <td style="text-align: right;">{{ operation.montant }}</td>
-						<td>{{ operation.numero_piece }}</td>
-                        <td>{{ operation.date.strftime('%d/%m/%Y') }}</td>
+                        <td style="text-align: right;">{{ operation.montant if source == 'manuelle' else operation.debit or operation.credit }}</td>
+                        <td>{{ operation.numero_piece if source == 'manuelle' else 'N/A' }}</td>
+                        <td>{{ operation.date_operation.strftime('%d/%m/%Y') if source == 'importée' else operation.date.strftime('%d/%m/%Y') }}</td>
                         <td>
-                            {% if operation.pieces_justificatives %}
+                            {% if source == 'manuelle' and operation.pieces_justificatives %}
                                 <a href="{{ url_for('static', filename='uploads/' + operation.pieces_justificatives[0].nom_fichier) }}" target="_blank">
                                     {{ operation.pieces_justificatives[0].nom_fichier }}
                                 </a>
@@ -100,16 +102,14 @@
                                 Pas de PJ
                             {% endif %}
                         </td>
-						<td>
-							<a href="{{ url_for('modifier_operation', operation_id=operation.id) }}" class="btn btn-link" title="Modifier">
-								<img src="{{ url_for('static', filename='img/edit.png') }}" alt="Modifier" style="width: 20px; height: 20px;">
-							</a>
-							<form action="{{ url_for('supprimer_operation', operation_id=operation.id) }}" method="POST" style="display:inline;" onsubmit="return confirmDelete({{ operation.pieces_justificatives|length > 0 }});">
-								<button type="submit" class="btn btn-link" title="Supprimer">
-									<img src="{{ url_for('static', filename='img/trash.png') }}" alt="Supprimer" style="width: 20px; height: 20px;">
-								</button>
-							</form>
-						</td>
+                        <td>
+                            <a href="{{ url_for('modifier_operation', operation_id=operation.id) }}" class="btn btn-link" title="Modifier">
+                                <img src="{{ url_for('static', filename='img/edit.png') }}" alt="Modifier" style="width: 24px; height: 24px;">
+                            </a>
+                            <a href="{{ url_for('confirmer_suppression_operation', operation_id=operation.id) }}" class="btn btn-link" title="Supprimer">
+                                <img src="{{ url_for('static', filename='img/trash.png') }}" alt="Supprimer" style="width: 20px; height: 20px;">
+                            </a>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -124,14 +124,27 @@
         <select id="compte-select" onchange="window.location.href='/?compte_id=' + this.value;">
             <option value="">--Choisissez un compte--</option>
             {% for compte in comptes %}
-            <option value="{{ compte.id }}">{{ compte.nom_personne_protegee }}</option>
+            <option value="{{ compte.id }}" {% if compte.id==selected_compte_id %}selected{% endif %}>
+                {{ compte.nom_personne_protegee }}
+            </option>
             {% endfor %}
         </select>
-        
-        <!-- Icône pour ajouter un nouveau compte -->
-        <a href="{{ url_for('ajouter_compte') }}" class="ajouter-compte">
-            <img src="{{ url_for('static', filename='plus-icon.png') }}" alt="Ajouter un compte" title="Ajouter un nouveau compte">
-        </a>
+        <a href="{{ url_for('ajouter_compte') }}" class="btn btn-primary">Ajouter un compte bancaire</a>
+        <div>
+            <h4>Solde du compte : {{ solde }} €</h4>
+            <p>Total des recettes : {{ total_recettes }} €</p>
+            <p>Total des dépenses : {{ total_depenses }} €</p>
+            <p>Nombre d'opérations : {{ nombre_operations }}</p>
+        </div>
+        <!-- Formulaire d'importation -->
+        <div>
+            <h4>Importer un relevé de compte</h4>
+            <form action="{{ url_for('import_releve') }}" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="compte_id" value="{{ compte.id }}">
+                <input type="file" name="file" accept=".pdf" required>
+                <button type="submit" class="btn btn-success">Importer</button>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}

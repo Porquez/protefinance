@@ -1,8 +1,12 @@
 /* Conteneur principal */
+/* Conteneur principal */
 .main-container {
     display: flex;
     justify-content: center;
-    padding-right: 200px; /* Espace pour le volet latéral */
+    padding-right: 125px; /* Espace pour le volet latéral */
+    transform: scale(0.9); /* Réduire la taille à 50% */
+    transform-origin: top left; /* Origine de la transformation */
+    width: 100%; /* Ajuste la largeur pour compenser la réduction */
 }
 
 /* Conteneur pour le tableau des opérations */
@@ -12,10 +16,9 @@
     font-size: 0.9em;
 }
 
-/* Style pour le tableau des opérations */
 #operations-table {
-    width: 100%;  /* Le tableau prend toute la largeur de son conteneur */
-    font-size: 0.9em;
+    overflow-y: auto; /* Ajoute le défilement vertical */
+    max-height: 400px; /* Limite la hauteur du tableau */
 }
 
 /* Pagination alignée à droite */
@@ -23,6 +26,12 @@
     display: flex;
     justify-content: flex-end;  /* Aligne la pagination à droite */
     margin-top: 20px;
+    padding: 10px; /* Ajout d'un padding pour améliorer l'espacement */
+}
+
+/* Style pour les boutons de pagination */
+.dataTables_paginate .btn {
+    margin-left: 5px; /* Espace entre les boutons */
 }
 
 /* Style des onglets */
@@ -77,22 +86,27 @@
 /* Style pour le volet latéral */
 .side-panel {
     position: fixed;
-    top: 100px;
+    top: 50px;
+    /* Ajustez cette valeur pour remonter le volet latéral */
     right: 0;
-    width: 200px;
+    width: 230px;
     background-color: #f8f9fa;
     padding: 15px;
     border-left: 1px solid #ddd;
-    height: 100%;
+    height: calc(100% - 50px);
+    /* Ajuste la hauteur pour compenser la nouvelle position */
 }
+
 .side-panel h4 {
     margin-bottom: 10px;
 }
+
 .side-panel select {
     width: 100%;
     padding: 8px;
     margin-bottom: 20px;
 }
+
 .side-panel .ajouter-compte img {
     cursor: pointer;
     width: 20px;
@@ -207,10 +221,11 @@ nav ul li a:hover {
     color: #0c82f2; /* Couleur d'accent lors du survol */
 }
 
-/* Style pour le contenu principal */
 main {
-    padding: 20px;
+    flex-grow: 1; /* Permet au main de s'étendre */
+    padding: 20px; /* Ajoute du padding pour le contenu */
 }
+
 
 /* Style pour les boutons et actions rapides */
 a {
@@ -222,15 +237,17 @@ a:hover {
     text-decoration: underline;
 }
 
+
 footer {
-    background-color: #1f2223;
-    color: #ffffff;
+    background-color: #1f2223; /* Correspond au header */
+    color: #ffffff; /* Couleur du texte */
     text-align: center;
-    padding: 10px;
+    padding: 10px; /* Ajoute du padding pour le pied de page */
     position: fixed;
     width: 100%;
     bottom: 0;
 }
+
 
 .btn {
     display: inline-block;

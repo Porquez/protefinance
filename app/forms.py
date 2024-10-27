@@ -26,8 +26,14 @@ class CompteForm(FlaskForm):
     rib = StringField('RIB/IBAN', validators=[DataRequired(), Length(min=14, max=34)])
     type_compte = SelectField('Type de compte', choices=[('Compte Courant', 'Compte Courant'), ('Compte Epargne', 'Compte Epargne')], validators=[DataRequired()])
     solde_initial = FloatField('Solde initial', validators=[DataRequired()])
-    banque = StringField('Nom de la banque', validators=[DataRequired()])
+    banque_id = SelectField('Banque', coerce=int, validators=[DataRequired()])
     submit = SubmitField('Ajouter le compte')
+
+class BanqueForm(FlaskForm):
+    nom = StringField('Nom de la Banque', validators=[DataRequired()])
+    adresse = StringField('Adresse', validators=[DataRequired()])
+    telephone = StringField('Téléphone', validators=[DataRequired()])
+    submit = SubmitField('Ajouter la Banque')
 
 class NatureForm(FlaskForm):
     nom = StringField('Nom', validators=[DataRequired()])

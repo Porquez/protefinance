@@ -8,4 +8,11 @@ instance/
 .env.*
 *.db
 uploads/
+dist/
+build/
+myenv*/
+*.log
+*.tmp
+uploads/
+
 

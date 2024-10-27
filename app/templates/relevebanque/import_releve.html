@@ -1,0 +1,92 @@
+{% extends "layout.html" %}
+
+{% block title %}Importer Relevé de Compte{% endblock %}
+
+{% block content %}
+<h2>Importer Relevé Mensuel du Compte</h2>
+
+<form method="POST" action="{{ url_for('import_releve') }}" enctype="multipart/form-data">
+    <input type="hidden" name="compte_id" value="{{ request.args.get('compte_id') }}">
+    
+    <div class="form-group">
+        <label for="file">Choisir le fichier PDF :</label>
+        <input type="file" name="file" class="form-control" accept=".pdf" required>
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Importer" class="btn btn-primary">
+    </div>
+</form>
+
+<!-- Afficher le tableau pour les opérations extraites seulement si elles existent -->
+{% if operations %}
+<h3>Opérations extraites ({{ operations|length }})</h3>
+<form method="POST" action="{{ url_for('valider_releve') }}">
+    <table class="table">
+        <thead>
+            <tr>
+                <th><input type="checkbox" id="select-all" onclick="toggleSelection(this)"></th> <!-- Checkbox pour tout sélectionner -->
+                <th>Date</th>
+                <th>Libellé</th>
+                <th>Débit</th>
+                <th>Crédit</th>
+                <th>Nature</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for operation in operations %}
+            <tr>
+                <td><input type="checkbox" name="selected_operations" value="{{ operation.id }}"></td> <!-- Checkbox pour chaque opération -->
+                <td><input type="date" name="date_operation_{{ loop.index }}" value="{{ operation.date }}" class="form-control"></td>
+                <td><input type="text" name="designation_{{ loop.index }}" value="{{ operation.operation }}" class="form-control"></td>
+                <td><input type="number" step="0.01" name="debit_{{ loop.index }}" value="{{ operation.debit }}" class="form-control"></td>
+                <td><input type="number" step="0.01" name="credit_{{ loop.index }}" value="{{ operation.credit }}" class="form-control"></td>
+                <td>
+                    <select name="nature_{{ loop.index }}" class="form-control">
+                        {% for nature in natures %}
+                        <option value="{{ nature.id }}" {% if operation.nature_id == nature.id %}selected{% endif %}>{{ nature.nom }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="form-group">
+        <input type="button" value="Annuler" class="btn btn-secondary" onclick="window.history.back();">
+        <input type="submit" value="Valider" class="btn btn-success">
+    </div>
+
+</form>
+
+<div class="pagination">
+    <button class="btn btn-secondary" onclick="navigatePage(-1)">Précédent</button>
+    <button class="btn btn-secondary" onclick="navigatePage(1)">Suivant</button>
+    <span>Affichage de 10 opérations par page</span>
+</div>
+
+{% else %}
+<p>Aucune opération extraite.</p>
+{% endif %}
+
+<a href="{{ url_for('index') }}">Retour</a>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleSelection(selectAllCheckbox) {
+    const checkboxes = document.querySelectorAll('input[name="selected_operations"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = selectAllCheckbox.checked;
+    });
+}
+
+function navigatePage(direction) {
+    // Logique pour la navigation entre les pages ici
+    // Vous pouvez utiliser une variable pour suivre la page actuelle et l'ajuster
+    // par exemple: currentPage += direction; et recharger les opérations de cette page
+    // Note: Vous devrez également mettre à jour votre logique côté serveur pour gérer la pagination
+}
+</script>
+{% endblock %}

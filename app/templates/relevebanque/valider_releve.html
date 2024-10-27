@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+
+{% block title %}Valider Relevé{% endblock %}
+
+{% block content %}
+<h2>Valider les opérations extraites</h2>
+
+<form method="POST" action="{{ url_for('valider_releve') }}">
+    <input type="hidden" name="compte_id" value="{{ compte_id }}">
+    <table class="table">
+        <thead>
+            <tr>
+                <th><input type="checkbox" id="select-all" onclick="toggleSelection(this)"></th>
+                <th>Date</th>
+                <th>Libellé</th>
+                <th>Débit</th>
+                <th>Crédit</th>
+                <th>Nature</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for operation in operations %}
+            <tr>
+                <td><input type="checkbox" name="selected_operations" value="{{ loop.index }}"></td>
+                <td><input type="date" name="date_operation_{{ loop.index }}" value="{{ operation.date }}" class="form-control"></td>
+                <td><input type="text" name="designation_{{ loop.index }}" value="{{ operation.operation }}" class="form-control"></td>
+                <td><input type="number" step="0.01" name="debit_{{ loop.index }}" value="{{ operation.debit }}" class="form-control"></td>
+                <td><input type="number" step="0.01" name="credit_{{ loop.index }}" value="{{ operation.credit }}" class="form-control"></td>
+                <td>
+                    <select name="nature_{{ loop.index }}" class="form-control">
+                        {% for nature in natures %}
+                        <option value="{{ nature.id }}" {% if operation.nature == nature.id %}selected{% endif %}>{{ nature.nom }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="form-group">
+        <input type="submit" value="Valider" class="btn btn-success">
+    </div>
+</form>
+
+<a href="{{ url_for('index') }}">Retour</a>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleSelection(selectAllCheckbox) {
+    const checkboxes = document.querySelectorAll('input[name="selected_operations"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = selectAllCheckbox.checked;
+    });
+}
+</script>
+{% endblock %}

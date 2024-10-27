@@ -1,8 +1,8 @@
 # app/seeds.py
 
 def seed_natures():
-    from app import db  # Déplacer l'importation ici pour éviter l'import circulaire
-    from app.models import Nature  # Importer les modèles nécessaires ici
+    from app import db
+    from app.models import Nature
 
     natures = [
         {"nom": "DEPENSE", "type_operation": "depense"},
@@ -22,21 +22,11 @@ def seed_natures():
     ]
 
     for nature_data in natures:
-        # Vérifiez si la nature existe déjà
         if not Nature.query.filter_by(nom=nature_data["nom"]).first():
             nature = Nature(**nature_data)
             db.session.add(nature)
 
-        # Vérifiez si les natures existent déjà pour éviter les doublons
-        if not Nature.query.filter_by(type_operation='recette').first():
-            nature_recette = Nature(type_operation='recette')
-            db.session.add(nature_recette)
-
-        if not Nature.query.filter_by(type_operation='depense').first():
-            nature_depense = Nature(type_operation='depense')
-            db.session.add(nature_depense)
-
-    db.session.commit()  # Validez la session
+    db.session.commit()
 
 def seed_modereglement():
     from app import db  # Importation ici pour éviter l'import circulaire

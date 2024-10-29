@@ -67,6 +67,7 @@
             <ul>
                 <li><a href="{{ url_for('index') }}">Accueil</a></li>
                 <li><a href="{{ url_for('contacts') }}">Gestion des contacts</a></li>
+                <li><a href="{{ url_for('routes_budget.budget') }}">Budget</a></li>
                 
                 {% if current_user.is_authenticated %}
                     <li>Bienvenue, {{ current_user.username }} !</li>

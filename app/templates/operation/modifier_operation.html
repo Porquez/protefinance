@@ -155,14 +155,45 @@
 {% block scripts %}
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const formControls = document.querySelectorAll(".form-control, .form-control-file");
-        formControls.forEach(control => {
-            control.addEventListener("focus", function () {
-                control.closest('.form-group').style.backgroundColor = "#f0f8ff";
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureButton = document.getElementById('capture');
+
+        // Démarrer le flux vidéo
+        navigator.mediaDevices.getUserMedia({ video: false })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(error => {
+                console.error("Erreur d'accès à la webcam:", error);
             });
-            control.addEventListener("blur", function () {
-                control.closest('.form-group').style.backgroundColor = "transparent";
-            });
+
+        // Capture de l'image
+        captureButton.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const dataURL = canvas.toDataURL('image/png');
+
+            // Envoi de l'image en base64 au serveur
+            fetch('/upload', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ data: dataURL })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Réponse du serveur:', data);
+                    if (data.status === 'success') {
+                        alert('Document sauvegardé avec succès !');
+                    } else {
+                        alert('Erreur lors de la sauvegarde du document.');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Erreur:', error);
+                });
         });
     });
 </script>

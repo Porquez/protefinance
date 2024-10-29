@@ -1,6 +1,37 @@
 from datetime import datetime
 from app import db
 
+# Modèle de base de données pour stocker les informations d'identification des utilisateurs
+from flask_bcrypt import Bcrypt
+
+from flask_login import UserMixin
+
+bcrypt = Bcrypt()
+
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    password = db.Column(db.String(200), nullable=False)
+
+    def set_password(self, password):
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    def check_password(self, password):
+        return bcrypt.check_password_hash(self.password, password)
+class UserConnection(db.Model):
+    __tablename__ = 'UserConnections'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))   # Relation avec la table User
+    user = db.relationship('User', backref='connections')       # Relation pour accéder à l'utilisateur associé à la connexion
+    machine_name = db.Column(db.String(100))
+    ip_address = db.Column(db.String(100))
+    start_time = db.Column(db.DateTime)
+    end_time = db.Column(db.DateTime)
+    login_url = db.Column(db.String(200))
+    status = db.Column(db.String(20))
+    error_message = db.Column(db.String(200))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
 class ReleveCompte(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     compte_id = db.Column(db.Integer, db.ForeignKey('compte.id'), nullable=False)  # Lien avec le compte

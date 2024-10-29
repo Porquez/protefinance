@@ -6,29 +6,31 @@
 <h2>Ajouter une nouvelle opération</h2>
 
 <form method="POST" action="{{ url_for('ajouter_operation') }}" enctype="multipart/form-data">
-    {{ form.hidden_tag() }}  <!-- CSRF token -->
-    
+    {{ form.hidden_tag() }} <!-- CSRF token -->
+
     <table>
         <tr>
             <td>{{ form.date.label }}</td>
             <td>{{ form.date() }}</td>
         </tr>
-		<tr>
+        <tr>
             <td>{{ form.beneficiaire.label }}</td>
             <td>
                 {{ form.beneficiaire() }}
-                <a href="{{ url_for('ajouter_beneficiaire') }}" class="btn btn-secondary btn-action" title="Ajouter un bénéficiaire" style="margin-left: 10px;">Ajouter</a>
+                <a href="{{ url_for('ajouter_beneficiaire') }}" class="btn btn-secondary btn-action"
+                    title="Ajouter un bénéficiaire" style="margin-left: 10px;">Ajouter</a>
             </td>
         </tr>
         <tr>
             <td>{{ form.montant.label }}</td>
             <td>{{ form.montant(size=10) }}</td>
         </tr>
-		<tr>
+        <tr>
             <td>{{ form.nature.label }}</td>
             <td>
                 {{ form.nature() }}
-                <a href="{{ url_for('ajouter_nature') }}" class="btn btn-secondary btn-action" title="Ajouter une nature" style="margin-left: 10px;">Ajouter</a>
+                <a href="{{ url_for('ajouter_nature') }}" class="btn btn-secondary btn-action"
+                    title="Ajouter une nature" style="margin-left: 10px;">Ajouter</a>
             </td>
         </tr>
         <tr>
@@ -39,9 +41,9 @@
             <td>{{ form.modereglement.label }}</td>
             <td>{{ form.modereglement() }}</td>
         </tr>
-		<tr>
+        <tr>
             <td>{{ form.numero_piece.label }}</td>
-            <td>{{ form.numero_piece() }}</td>  
+            <td>{{ form.numero_piece() }}</td>
         </tr>
         <tr>
             <td>{{ form.compte_id.label }}</td>
@@ -49,7 +51,7 @@
         </tr>
         <tr>
             <td>{{ form.fichiers.label }}</td>
-            <td>{{ form.fichiers() }}</td> 
+            <td>{{ form.fichiers(class="form-control-file") }}</td>
         </tr>
         <tr>
             <td colspan="2">{{ form.submit(class="btn btn-primary") }}</td>
@@ -58,4 +60,45 @@
 </form>
 
 <a href="{{ url_for('index') }}">Retour</a>
+
+<script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const captureButton = document.getElementById('capture');
+
+    navigator.mediaDevices.getUserMedia({ video: false })
+        .then(stream => {
+            video.srcObject = stream;
+        })
+        .catch(error => {
+            console.error("Erreur d'accès à la webcam:", error);
+        });
+
+    captureButton.addEventListener('click', () => {
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const dataURL = canvas.toDataURL('image/png');
+
+        fetch('/upload', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ data: dataURL })  // Convertir en JSON avant d'envoyer
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Réponse du serveur:', data);
+                if (data.status === 'success') {
+                    alert('Document sauvegardé avec succès !');
+                } else {
+                    alert('Erreur lors de la sauvegarde du document.');
+                }
+            })
+            .catch((error) => {
+                console.error('Erreur:', error);
+            });
+    });
+</script>
+
 {% endblock %}

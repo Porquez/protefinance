@@ -67,6 +67,13 @@
             <ul>
                 <li><a href="{{ url_for('index') }}">Accueil</a></li>
                 <li><a href="{{ url_for('contacts') }}">Gestion des contacts</a></li>
+                
+                {% if current_user.is_authenticated %}
+                    <li>Bienvenue, {{ current_user.username }} !</li>
+                    <li><a href="{{ url_for('routes_login.logout') }}">Déconnexion</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('routes_login.login') }}">Connexion</a></li>
+                {% endif %}
             </ul>
         </nav>
     </header>

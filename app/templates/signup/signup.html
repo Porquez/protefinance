@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_signup.css') }}">
+</head>
+
+<body>
+    <div class="signup-container">
+        <h2>Créer un compte</h2>
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            <label for="username">Nom d’utilisateur:</label>
+            {{ form.username(class="form-input") }}
+            <label for="password">Mot de passe:</label>
+            {{ form.password(class="form-input") }}
+            <label for="confirm_password">Confirmer le mot de passe:</label>
+            {{ form.confirm_password(class="form-input") }}
+            {{ form.submit(class="form-submit") }}
+        </form>
+    </div>
+</body>
+
+</html>

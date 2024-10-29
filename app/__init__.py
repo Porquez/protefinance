@@ -1,30 +1,44 @@
 # app/__init__.py
-
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_wtf.csrf import CSRFProtect
+from flask_socketio import SocketIO
+from .extensions import db, bcrypt  # Importer db et bcrypt depuis extensions.py
+from flask_login import LoginManager
 import os
-from .seeds import seed_natures, seed_beneficiaires, seed_modereglement
 
 app = Flask(__name__, static_folder='static')
-
-# Utiliser des variables d'environnement pour la configuration
-UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', os.path.join(app.root_path, 'static/uploads'))
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-# Définir le chemin de la base de données
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI', f'sqlite:///{os.path.join(app.root_path, "../instance/protefinance.db")}')
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'default_secret_key_here')
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
-db = SQLAlchemy(app)
+# Initialiser les extensions
+db.init_app(app)
+bcrypt.init_app(app)
 migrate = Migrate(app, db)
+socketio = SocketIO(app)
 
-# Importez vos routes ici pour les rendre actives
-from app import routes  # Cela charge les définitions de routes
+# Configurer LoginManager
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'routes_login.login'  
 
-# Créez les tables si elles n'existent pas déjà
+app.config['SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY')
+app.secret_key = app.config['SECRET_KEY'] 
+csrf = CSRFProtect(app)
+
+@login_manager.user_loader
+def load_user(user_id):
+    from app.models import User
+    return User.query.get(int(user_id))
+
+# Enregistrer les blueprints et créer les tables
 with app.app_context():
-    db.create_all()  # Crée les tables si elles n'existent pas
-    seed_natures()  # Appelez la fonction de semence
-    seed_beneficiaires()
-    seed_modereglement()
+    from app.routes.routes_signup import routes_signup
+    from .routes.routes import main_blueprint
+    from .routes.routes_login import routes_login
+    app.register_blueprint(main_blueprint)
+    app.register_blueprint(routes_login)
+    app.register_blueprint(routes_signup)
+
+    db.create_all()

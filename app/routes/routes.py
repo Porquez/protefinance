@@ -1,17 +1,27 @@
 from app import app, db  # Importer l'instance de l'application Flask et db
-from flask import render_template, redirect, url_for, request, flash, current_app
+from flask import render_template, redirect, url_for, request, flash, current_app, jsonify, Blueprint
+from flask_login import login_required
 from app.models import Compte, Operation, Nature, Beneficiaire, ModeReglement, PieceJustificative, Contact, Banque, ReleveCompte
 from app.forms import CompteForm, OperationForm, BeneficiaireForm, ModeReglementForm, PieceJustificativeForm, ContactForm, NatureForm, BanqueForm
 from werkzeug.utils import secure_filename
 from pdf2image import convert_from_path
+from PIL import Image
 
+import base64  #
 import pytesseract
 import os
 import logging
 import datetime
 from datetime import datetime
 
-@app.route('/')
+from flask import Blueprint
+
+main_blueprint = Blueprint('main', __name__)
+
+@main_blueprint.route('/')
+
+@app.route('/', methods=['GET', 'POST'])
+@login_required
 def index():
     comptes = Compte.query.all()  
     compte_id = request.args.get('compte_id')
@@ -25,27 +35,26 @@ def index():
         # Récupérer les opérations importées (mais ne les inclure pas par défaut)
         operations_importees = ReleveCompte.query.filter_by(compte_id=compte_id).all()
 
-        # Par défaut, afficher uniquement les opérations manuelles
+        # Par défaut, afficher uniquement les opÃ©rations manuelles
         operations = [(op, 'manuelle') for op in operations_manuelles]
 
-        # Calcul des totaux pour les opérations manuelles
+        # Calcul des totaux pour les opÃ©rations manuelles
         total_recettes = sum(op.montant for op in operations_manuelles if op.montant > 0)
         total_depenses = sum(-op.montant for op in operations_manuelles if op.montant < 0)
 
         solde = total_recettes - total_depenses
         nombre_operations = len(operations)
-        selected_compte_id = compte.id  # Définit l'ID du compte sélectionné
+        selected_compte_id = compte.id  
     else:
         compte = None
         operations = []
         total_recettes = total_depenses = solde = nombre_operations = 0
-        selected_compte_id = None  # Aucun compte sélectionné
+        selected_compte_id = None  
 
     return render_template('index.html', comptes=comptes, compte=compte, operations=operations, 
                            total_recettes=total_recettes, total_depenses=total_depenses, 
                            solde=solde, nombre_operations=nombre_operations,
-                           selected_compte_id=selected_compte_id)  # Passez-le au modèle
-
+                           selected_compte_id=selected_compte_id)  
 
 @app.route('/formulaire_banque', methods=['GET', 'POST'])
 def formulaire_banque():
@@ -81,6 +90,32 @@ def formulaire_banque():
         return redirect(url_for('index'))
 
     return render_template('banque/formulaire_banque.html', form=form)  # Passer le formulaire au template
+
+@app.route('/upload', methods=['POST'])
+def upload():
+    data = request.json  # Récupérer les données JSON envoyées
+    if 'data' not in data:
+        return jsonify({'error': 'Aucune donnée reçue'}), 400  # Vérification de la présence de 'data'
+
+    # Décoder l'image en base64
+    header, encoded = data['data'].split(',', 1)
+    
+    # Générer un nom de fichier unique avec un horodatage
+    horodatage = datetime.now().strftime("%Y%m%d%H%M%S")  # Format : année-mois-jour-heure-minute-seconde
+    nom_image = f"document_{horodatage}.png"
+    chemin_image = os.path.join(current_app.config['UPLOAD_FOLDER'], nom_image)
+    
+    # Enregistrer l'image
+    with open(chemin_image, 'wb') as f:
+        f.write(base64.b64decode(encoded))
+    
+    # Convertir en PDF
+    image = Image.open(chemin_image).convert('RGB')
+    nom_pdf = f"document_{horodatage}.pdf"
+    chemin_pdf = os.path.join(current_app.config['UPLOAD_FOLDER'], nom_pdf)
+    image.save(chemin_pdf, "PDF")
+
+    return jsonify({'status': 'success', 'pdf_path': chemin_pdf})
 
 @app.route('/ajouter_beneficiaire', methods=['GET', 'POST'])
 def ajouter_beneficiaire():
@@ -306,10 +341,6 @@ def bilan(compte_id):
 @app.route('/settings')  # Ajouter cette route
 def settings():
     return render_template('settings.html')
-
-@app.route('/logout')  # Ajouter cette route
-def logout():
-    return render_template('logout.html')
 
 @app.route('/contacts')
 def contacts():

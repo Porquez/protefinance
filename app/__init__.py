@@ -9,7 +9,6 @@ import os
 
 app = Flask(__name__, static_folder='static')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI', f'sqlite:///{os.path.join(app.root_path, "../instance/protefinance.db")}')
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'default_secret_key_here')
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
 # Initialiser les extensions

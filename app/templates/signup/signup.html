@@ -13,15 +13,16 @@
         <h2>Créer un compte</h2>
         <form method="POST">
             {{ form.hidden_tag() }}
-            <label for="username">Nom d’utilisateur:</label>
+            <label for="username">Nom d'utilisateur :</label>
             {{ form.username(class="form-input") }}
-            <label for="password">Mot de passe:</label>
+            <label for="email">Adresse e-mail :</label>
+            {{ form.email(class="form-input") }}
+            <label for="password">Mot de passe :</label>
             {{ form.password(class="form-input") }}
-            <label for="confirm_password">Confirmer le mot de passe:</label>
+            <label for="confirm_password">Confirmer le mot de passe :</label>
             {{ form.confirm_password(class="form-input") }}
             {{ form.submit(class="form-submit") }}
         </form>
     </div>
 </body>
-
 </html>

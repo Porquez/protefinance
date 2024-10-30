@@ -1,0 +1,8 @@
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <label for="email">Adresse e-mail :</label>
+    {{ form.email(class="form-input") }}
+    <label for="verification_code">Code de vérification :</label>
+    {{ form.verification_code(class="form-input") }}
+    {{ form.submit(class="form-submit") }}
+</form>

@@ -1,3 +1,27 @@
+// Afficher/masquer le menu déroulant lors du clic sur le bouton userButton
+document.getElementById('userButton').addEventListener('click', function(event) {
+    event.stopPropagation(); // Empêche le clic de se propager au `window`
+    var dropdown = document.getElementById('dropdownMenu');
+    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+});
+
+// Recherche lorsque l'on appuie sur "Entrée" dans le champ de recherche
+document.getElementById("search-box").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        event.preventDefault(); // Empêche le rechargement de la page
+        document.getElementById("search-button").click(); // Simule un clic sur le bouton de recherche
+    }
+});
+
+// Cacher le menu déroulant lorsqu'on clique en dehors
+window.onclick = function(event) {
+    var dropdown = document.getElementById('dropdownMenu');
+    if (dropdown.style.display === 'block' && !event.target.matches('#userButton')) {
+        dropdown.style.display = 'none';
+    }
+};
+
+
 $(document).ready(function () {
     // Vérifiez si la table DataTable existe déjà
     if ($.fn.dataTable.isDataTable('#operations-table')) {

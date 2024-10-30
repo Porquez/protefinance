@@ -2,17 +2,21 @@ from datetime import datetime
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import DateField, FloatField, SelectField, StringField, SubmitField, PasswordField
-from wtforms.validators import DataRequired, Length, Optional,EqualTo
+from wtforms.validators import DataRequired, Email, Length, Optional,EqualTo
 from app.models import Nature, Beneficiaire, Compte, ModeReglement, Contact
+
+class VerificationForm(FlaskForm):
+    verification_code = StringField('Code de vérification', validators=[DataRequired()])
+    submit = SubmitField('Vérifier')
 
 class LoginForm(FlaskForm):
     username = StringField('Nom d''utilisateur', validators=[DataRequired()])
     password = PasswordField('Mot de passe', validators=[DataRequired()])
     submit = SubmitField('Connexion')
 
-
 class SignupForm(FlaskForm):
-    username = StringField('Nom d''utilisateur', validators=[DataRequired()])
+    username = StringField('Nom d\'utilisateur', validators=[DataRequired()])
+    email = StringField('Adresse e-mail', validators=[DataRequired(), Email()])
     password = PasswordField('Mot de passe', validators=[DataRequired()])
     confirm_password = PasswordField('Confirmer le mot de passe', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Créer un compte')

@@ -1,5 +1,5 @@
 # app/__init__.py
-from flask import Flask
+from flask import Flask, request, abort
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect
 from flask_socketio import SocketIO
@@ -32,6 +32,14 @@ csrf = CSRFProtect(app)
 
 # Enregistrer le filtre dans l'environnement Jinja
 app.jinja_env.filters['sum'] = sum_filter
+
+# Récupérer les adresses IP autorisées depuis une variable d'environnement
+ALLOWED_IPS = os.environ.get('ALLOWED_IPS', '').split(',')
+
+@app.before_request
+def limit_remote_addr():
+    if request.remote_addr not in ALLOWED_IPS:
+        abort(403)  # Interdit si l'adresse IP n'est pas dans la liste
 
 @login_manager.user_loader
 def load_user(user_id):
